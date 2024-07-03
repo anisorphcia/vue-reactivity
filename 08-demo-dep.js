@@ -39,17 +39,17 @@ class Dep {
       return dep;
     };
 
-    return new Proxy(target, {
-      get(target, property, receiver) {
-        const dep = getDep(target, property);
-        dep.depend();
-        return Reflect.get(target, property, receiver);
-      },
-      set(target, property, value, receiver) {
-        const dep = getDep(target, property);
-        const result = Reflect.set(target, property, value, receiver);
-        dep.notify();
-        return result;
-      },
-    });
+    const handler = {
+        get(target, property, receiver){
+            const dep = getDep(target, property)
+            dep.depend()
+            return Reflect.get(target, property, receiver)
+        },
+        set(target, property, value, receiver){
+            const dep = getDep(target, property)
+            dep.notify()
+            return Reflect.set(target, property, value, receiver)
+        }
+    }
+    return new Proxy(target, handler)
   }
