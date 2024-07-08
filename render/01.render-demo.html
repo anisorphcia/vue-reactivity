@@ -1,0 +1,123 @@
+<style>
+    .coral {
+        color: coral;
+    }
+
+    .red {
+        color: red;
+    }
+</style>
+<div id="app"></div>
+<script>
+    function h(tag, props, children) {
+        return {
+            tag,
+            props,
+            children
+        }
+    }
+
+    function mount(vnode, container) {
+        const el = vnode.el = document.createElement(vnode.tag)
+        // props
+        if (vnode.props) {
+            for (const key in vnode.props) {
+                const value = vnode.props[key]
+                el.setAttribute(key, value)
+            }
+        }
+        // children
+        if (vnode.children) {
+            if (typeof vnode.children === 'string') {
+                el.textContent = vnode.children
+            } else {
+                vnode.children.forEach(child => {
+                    mount(child, el)
+                })
+            }
+        }
+        container.appendChild(el)
+    }
+
+    const vdom = h('div', { class: 'coral' }, [
+        h('span', null, 'hello')
+    ])
+
+    mount(vdom, document.getElementById('app'))
+
+    function patch(n1, n2) {
+        if (n1.tag === n2.tag) {
+            // props , 4 种可能
+            const el = n2.el = n1.el
+            const oldProps = n1.props || {}
+            const newProps = n2.props || {}
+            for (const key in newProps) {
+                // 两者都存在时
+                const oldValue = oldProps[key]
+                const newValue = newProps[key]
+                if (oldValue !== newValue) {
+                    el.setAttribute(key, newValue)
+                }
+            }
+            for (const key in oldProps) {
+                if (!(key in newProps)) {
+                    // 新的 props 里面不存在 key
+                    el.removeAttribute(key)
+                }
+            }
+
+            // children string or array
+            const oldChildren = n1.children
+            const newChildren = n2.children
+            debugger
+            if (typeof newChildren === 'string') {
+                if (typeof oldChildren === 'string') {
+                    console.log('2222')
+                    debugger
+                    if (newChildren !== oldChildren) {
+                        el.textContent = newChildren
+                    }
+                } else {
+                    // new string
+                    // old array
+                    el.textContent = newChildren
+                }
+            } else {
+                // new array
+                if (typeof oldChildren === 'string') {
+                    // old string
+                    el.innerHTML = ''
+                    newChildren.forEach(child => {
+                        mount(child, el)
+                    })
+                } else {
+                    // both array
+                    const commonLength = Math.min(oldChildren.length, newChildren.length)
+                    // 把最小的对比好，然后处理剩余部分
+                    for (let i = 0; i < commonLength; ++i) {
+                        patch(oldChildren[i], newChildren[i])
+                    }
+                    // 如果 新节点比较长，那就直接到后面衔接起来
+                    if (newChildren.length > oldChildren.length) {
+                        newChildren.slice(oldChildren.length).forEach(child => {
+                            mount(child, el)
+                        })
+                    } else if (newChildren.length < oldChildren.length) {
+                        // 如果 新节点 比较短，那么就把刚刚处理好的尾部挪去
+                        oldChildren.slice(newChildren.length).forEach(child => {
+                            el.removeChild(child.el)
+                        })
+                    }
+                }
+            }
+        } else {
+
+        }
+    }
+
+    const vdom2 = h('div', { class: 'red' }, [
+        h('span', null, 'changed!')
+    ])
+
+    patch(vdom, vdom2)
+</script>
