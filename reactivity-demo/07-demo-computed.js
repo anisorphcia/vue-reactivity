@@ -42,7 +42,7 @@ function reactive(target) {
     return new Proxy(target, handler)
 }
 
-function effect(eff) {
+function watchEffect(eff) {
     activeEffect = eff
     activeEffect()
     activeEffect = null
@@ -68,20 +68,20 @@ function computed(getter) {
     return result
 }
 
-let product = reactive({ price: 5, quantity: 2 })
-product.name = 'anything'
-let salePrice = computed(() => {
-    return product.price * 1.1
-})
-let total = computed(() => {
-    return product.price * product.quantity
-})
-console.log('before total', total.value)
-console.log('before salePrice', salePrice.value)
-console.log('before product', product)
-product.quantity = 9
-product.price = 10
-product.name = 'nothing'
-console.log('after total', total.value)
-console.log('after salePrice', salePrice.value)
-console.log('product', product)
+// let product = reactive({ price: 5, quantity: 2 })
+// product.name = 'anything'
+// let salePrice = computed(() => {
+//     return product.price * 1.1
+// })
+// let total = computed(() => {
+//     return product.price * product.quantity
+// })
+// console.log('before total', total.value)
+// console.log('before salePrice', salePrice.value)
+// console.log('before product', product)
+// product.quantity = 9
+// product.price = 10
+// product.name = 'nothing'
+// console.log('after total', total.value)
+// console.log('after salePrice', salePrice.value)
+// console.log('product', product)

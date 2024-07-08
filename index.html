@@ -1,11 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-</head>
-<body>
-    <script src="./07-demo-computed.js"></script>
-</body>
+  </head>
+  <body>
+    <div id="app">
+      <p id="text">Count: 0</p>
+      <button id="button">Increment</button>
+    </div>
+    <script src="./08-demo-dep.js"></script>
+    <script>
+      const state = reactive({ count: 0 });
+
+      const textElement = document.getElementById("text");
+      const buttonElement = document.getElementById("button");
+
+      function updateView() {
+
+      }
+      watchEffect(() => {
+        textElement.innerText = `Count: ${state.count}`;
+      });
+
+      buttonElement.addEventListener("click", () => {
+        state.count++;
+        console.log(state.count)
+      });
+    </script>
+  </body>
 </html>
